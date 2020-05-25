@@ -9,30 +9,30 @@ stage('Git Checkout') {
     }
     
 stage('Build Docker Image'){
-     sh "docker build -t  ${imagename} ."
+     powershell "docker build -t  ${imagename} ."
     }
     
 stage('Stop Existing Container'){
-     sh "docker stop ${container}"
+     powershell "docker stop ${container}"
     }
     
 stage('Remove Existing Container'){
-     sh "docker rm ${container}"
+     powershell "docker rm ${container}"
     }
     
 stage ('Running Container to test built Docker Image'){
-    sh "docker run -dit --name ${container} -p 80:80 ${imagename}"
+    powershell "docker run -dit --name ${container} -p 80:80 ${imagename}"
     }
     
 stage('Tag Docker Image'){
-    sh "docker tag ${imagename} ${env.dockeruser}/ubuntu:16.04"
+    powershell "docker tag ${imagename} ${env.dockeruser}/ubuntu:16.04"
     }
 
 stage('Docker Login and Push Image'){
     withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', passwordVariable: 'dockerpasswd', usernameVariable: 'dockeruser')]) {
-    sh "docker login -u ${dockeruser} -p ${dockerpasswd}"
+    powershell "docker login -u ${dockeruser} -p ${dockerpasswd}"
     }
-    sh "docker push ${dockeruser}/ubuntu:16.04"
+    powershell "docker push ${dockeruser}/ubuntu:16.04"
     }
 
 }
